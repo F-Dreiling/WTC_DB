@@ -1,24 +1,61 @@
 <?php
+    session_start();
+    
     require_once 'backend.php';
 
-    if(isset($_POST['submit'])) {
-        if (isset($_POST['dbName']) && isset($_POST['userName'])) {
-            $dbName = $_POST['dbName'];
-            $table = $_POST['table'];
-            $userName = $_POST['userName'];
-            isset($_POST['passWord']) ? $passWord = $_POST['passWord'] : $passWord = "";
+    function connect(&$backend) {
+
+        if (isset($_SESSION['dbName']) && isset($_SESSION['table']) && isset($_SESSION['userName'])) {
 
             try {
-                $backend = new Backend();
-                $backend->connect($dbName, $userName, $passWord);
-                $backend->fetchData($table);
-            } catch (PDOException $e) {
-                $error = "Error: " . $e->getMessage();
+                $backend->connect($_SESSION['dbName'], $_SESSION['userName'], $_SESSION['passWord']);
+                $backend->fetchData($_SESSION['table']);
+
+                $_SESSION['success'] = "Connected to the database successfully!";
+                unset($_SESSION['error']);
             }
+            catch (PDOException $e) {
+                $_SESSION['error'] = "Error: " . $e->getMessage();
+                unset($_SESSION['success']);
+
+                unset($_SESSION['dbName']);
+                unset($_SESSION['table']);
+                unset($_SESSION['userName']);
+                unset($_SESSION['passWord']);
+
+                header("Location: index.php");
+                return;
+            }
+
+        }
+
+    }
+
+    if(isset($_POST['submit'])) {
+
+        if (isset($_POST['dbName']) && isset($_POST['table']) && isset($_POST['userName'])) {
+            $_SESSION['dbName'] = $_POST['dbName'];
+            $_SESSION['table'] = $_POST['table'];
+            $_SESSION['userName'] = $_POST['userName'];
+            $_SESSION['passWord'] = $_POST['passWord'] ?? "";
+            $_SESSION['load'] = true;
+
+            header("Location: index.php");
+            return;
         } 
         else {
-            $error = "Please enter the database name, username, and password.";
+            $_SESSION['error'] = "Please enter the database name, table, username, and optionally password.";
+            unset($_SESSION['load']);
+
+            header("Location: index.php");
+            return;
         }
+
+    }
+
+    if (isset($_SESSION['load'])) {
+        $backend = new Backend();
+        connect($backend);
     }
 ?>
 
@@ -33,23 +70,28 @@
 </head>
 <body>
     <div id="content" class="container">
-        <h1>Welcome to the DB</h1>
+        <h1>Welcome to DB Viewer</h1>
 
         <?php
         
-        if (isset($_POST['submit'])) {
-            if (isset($error)) {
-                echo "<p class='text-danger'>$error</p>";
-                unset($error);
+        if (isset($_SESSION['load'])) {
+
+            if (isset($_SESSION['error'])) {
+                echo "<p class='text-danger'>".htmlentities($_SESSION['error'])."</p>";
+                unset($_SESSION['error']);
             }
-            else {
-                echo "<p class='text-success'>Connection successful!</p>";
+            else if (isset($_SESSION['success'])) {
+                echo "<p class='text-success'>".htmlentities($_SESSION['success'])."</p>";
+                unset($_SESSION['success']);
+
                 $backend->render();
             }
+
+            echo "<br><p><a href='reset.php'>Reset</a></p>";
         }
         else { ?>
 
-        <p class="text-info">Please enter the database name, username, and password to connect. If you don't have a password, leave it blank.</p>
+        <p class="text-info">Please enter the database and table name, username and optionally password.</p>
         <p class="text-warning">If the database host is not <b>localhost</b> or the port is not <b>3306</b>, please change it in the backend.</p><br>
         <p>
             <form action="index.php" method="POST">
