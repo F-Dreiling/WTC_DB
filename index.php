@@ -11,7 +11,7 @@
                 $backend->connect($_SESSION['dbName'], $_SESSION['userName'], $_SESSION['passWord']);
                 $backend->fetchData($_SESSION['table']);
 
-                $_SESSION['success'] = "Connected to the database successfully!";
+                $_SESSION['success'] = "Fetched data from the database successfully";
                 unset($_SESSION['error']);
             }
             catch (PDOException $e) {
@@ -23,33 +23,27 @@
                 unset($_SESSION['table']);
                 unset($_SESSION['userName']);
                 unset($_SESSION['passWord']);
-
-                header("Location: index.php");
-                return;
             }
-
         }
-
     }
 
     if(isset($_POST['submit'])) {
 
-        if (isset($_POST['dbName']) && isset($_POST['table']) && isset($_POST['userName'])) {
+        if (strlen($_POST['dbName']) > 0 && strlen($_POST['table']) > 0 && strlen($_POST['userName']) > 0) {
             $_SESSION['dbName'] = $_POST['dbName'];
             $_SESSION['table'] = $_POST['table'];
             $_SESSION['userName'] = $_POST['userName'];
             $_SESSION['passWord'] = $_POST['passWord'] ?? "";
             $_SESSION['load'] = 'load';
-
-            header("Location: index.php");
-            return;
         } 
         else {
-            $_SESSION['error'] = "Please enter the database name, table, username, and optionally password.";
+            $_SESSION['error'] = "Missing database name, table or username";
             unset($_SESSION['success']);
             unset($_SESSION['load']);
         }
 
+        header("Location: index.php");
+        return;
     }
 
     if (isset($_SESSION['load'])) {
@@ -74,7 +68,7 @@
         <?php
 
         if (isset($_SESSION['error'])) {
-            echo "<p class='text-danger'>".htmlentities($_SESSION['error'])."</p>";
+            echo "<p class='text-danger'>".htmlentities($_SESSION['error'])."</p><br>";
             unset($_SESSION['error']);
         }
 
@@ -85,7 +79,7 @@
 
         if (isset($_SESSION['load'])) {
             $backend->render();
-            echo "<br><p><a href='reset.php' type='button' class='btn btn-primary'>Reset and Back</a></p>";
+            echo "<p><a href='reset.php' type='button' class='btn btn-primary'>Reset and Back</a></p>";
         }
         else { ?>
 
