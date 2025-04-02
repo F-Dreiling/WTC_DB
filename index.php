@@ -17,6 +17,7 @@
             catch (PDOException $e) {
                 $_SESSION['error'] = "Error: " . $e->getMessage();
                 unset($_SESSION['success']);
+                unset($_SESSION['load']);
 
                 unset($_SESSION['dbName']);
                 unset($_SESSION['table']);
@@ -38,17 +39,15 @@
             $_SESSION['table'] = $_POST['table'];
             $_SESSION['userName'] = $_POST['userName'];
             $_SESSION['passWord'] = $_POST['passWord'] ?? "";
-            $_SESSION['load'] = true;
+            $_SESSION['load'] = 'load';
 
             header("Location: index.php");
             return;
         } 
         else {
             $_SESSION['error'] = "Please enter the database name, table, username, and optionally password.";
+            unset($_SESSION['success']);
             unset($_SESSION['load']);
-
-            header("Location: index.php");
-            return;
         }
 
     }
@@ -66,28 +65,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="actions.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <title>Document</title>
+    <title>DB Viewer</title>
 </head>
 <body>
     <div id="content" class="container">
         <h1>Welcome to DB Viewer</h1>
 
         <?php
-        
+
+        if (isset($_SESSION['error'])) {
+            echo "<p class='text-danger'>".htmlentities($_SESSION['error'])."</p>";
+            unset($_SESSION['error']);
+        }
+
+        if (isset($_SESSION['success'])) {
+            echo "<p class='text-success'>".htmlentities($_SESSION['success'])."</p>";
+            unset($_SESSION['success']);
+        }
+
         if (isset($_SESSION['load'])) {
-
-            if (isset($_SESSION['error'])) {
-                echo "<p class='text-danger'>".htmlentities($_SESSION['error'])."</p>";
-                unset($_SESSION['error']);
-            }
-            else if (isset($_SESSION['success'])) {
-                echo "<p class='text-success'>".htmlentities($_SESSION['success'])."</p>";
-                unset($_SESSION['success']);
-
-                $backend->render();
-            }
-
-            echo "<br><p><a href='reset.php'>Reset</a></p>";
+            $backend->render();
+            echo "<br><p><a href='reset.php' type='button' class='btn btn-primary'>Reset and Back</a></p>";
         }
         else { ?>
 
@@ -103,7 +101,7 @@
                 <input type="text" name="passWord" id="passWord" placeholder="Enter your password"><br><br>
                 <label for="passWord">Table:</label>
                 <input type="text" name="table" id="table" placeholder="Enter the table to display"><br><br>
-                <input type="submit" name="submit" value="Submit">
+                <input type="submit" class="btn btn-primary" name="submit" value="Submit">
             </form>
         </p>
 
