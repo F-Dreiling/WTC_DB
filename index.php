@@ -1,7 +1,5 @@
 <?php
     session_start();
-    
-    require_once 'backend.php';
 
     function connect(&$backend) {
 
@@ -47,8 +45,17 @@
     }
 
     if (isset($_SESSION['load'])) {
-        $backend = new Backend();
-        connect($backend);
+
+        $url = 'http://localhost/dbviewer/server.php/getall';
+        $params = [
+            'db' => $_SESSION['dbName'],
+            'table' => $_SESSION['table'],
+            'user' => $_SESSION['userName'],
+            'pass' => $_SESSION['passWord']
+        ];
+        $url .= '?' . http_build_query($params);
+        $response = file_get_contents($url);
+
     }
 ?>
 
@@ -78,7 +85,7 @@
         }
 
         if (isset($_SESSION['load'])) {
-            $backend->render();
+            echo $response;
             echo "<p><a href='reset.php' type='button' class='btn btn-primary'>Reset and Back</a></p>";
         }
         else { ?>
