@@ -19,8 +19,13 @@ if ( $requestMethod === 'POST' && $requestUri === '/dbviewer/server.php/getone' 
         $user = htmlspecialchars($params['user']);
         $pass = htmlspecialchars($params['pass']);
 
-        $backend->connect($db, $user, $pass);
-        $response = $backend->fetchOne($table, $key, $id);
+        try {
+            $backend->connect($db, $user, $pass);
+            $response = $backend->fetchOne($table, $key, $id);
+        }
+        catch (PDOException $e) {
+            $response = "Connection failed with error code " . $e->getCode() . " for " . $db . " " . $user . " " . $pass;
+        }
     }
     else {
         $response = "Invalid ID received";
@@ -39,12 +44,17 @@ else if ( $requestMethod === 'GET' && $requestUri === '/dbviewer/server.php/geta
         $user = htmlspecialchars($_GET['user']);
         $pass = htmlspecialchars($_GET['pass']);
 
-        $backend->connect($db, $user, $pass);
-        $backend->fetchAll($table);
-        $response = $backend->renderReturn();
+        try {
+            $backend->connect($db, $user, $pass);
+            $backend->fetchAll($table);
+            $response = $backend->renderReturn();
+        }
+        catch (PDOException $e) {
+            $response = "<p>Connection failed with error code " . $e->getCode() . " for " . $db . " " . $user . " " . $pass."</p>";
+        }
     }
     else {
-        $response = "Invalid Data received";
+        $response = "<p>Invalid Data received</p>";
     }
 
     header('Content-Type: text/html');
