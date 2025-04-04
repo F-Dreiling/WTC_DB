@@ -66,13 +66,6 @@ class Backend {
 
         // Get Row Count
         $this->data->rowCount = 1;
-
-        // Return the data
-        $result = "";
-        foreach ($this->data->tableData[0] as $cell) {
-            $result .= $cell . " ";
-        }
-        return $result;
     }
 
     function fetchAll($table) {
@@ -136,6 +129,10 @@ class Backend {
         $result .= "</tbody></table>";
 
         return $result;
+    }
+
+    function oneToString(){
+        return implode(" ", $this->data->tableData[0]);
     }
 
 }

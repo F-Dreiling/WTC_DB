@@ -23,7 +23,8 @@ if ( $requestMethod === 'POST' && $requestUri === '/dbviewer/server/server.php/g
 
         try {
             $backend->connect($host, $port,$db, $user, $pass);
-            $response = $backend->fetchOne($table, $key, $id);
+            $backend->fetchOne($table, $key, $id);
+            $response = $backend->oneToString();
         }
         catch (PDOException $e) {
             $response = "Connection failed with error code " . $e->getCode() . " for " . $host . " " . $port . " " . $db . " " . $user . " " . $pass;
