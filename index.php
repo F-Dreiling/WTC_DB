@@ -24,7 +24,7 @@
 
     if (isset($_SESSION['load'])) {
 
-        $url = 'http://localhost/dbviewer/server.php/getall';
+        $url = 'http://localhost/dbviewer/server/server.php/getall';
         $params = [
             'host' => $_SESSION['host'],
             'port' => $_SESSION['port'],

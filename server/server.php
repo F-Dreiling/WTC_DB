@@ -7,7 +7,7 @@ $backend = new Backend();
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-if ( $requestMethod === 'POST' && $requestUri === '/dbviewer/server.php/getone' ) {
+if ( $requestMethod === 'POST' && $requestUri === '/dbviewer/server/server.php/getone' ) {
     $input = file_get_contents('php://input');
     parse_str($input, $params);
 
@@ -38,7 +38,7 @@ if ( $requestMethod === 'POST' && $requestUri === '/dbviewer/server.php/getone' 
     exit;
 }
 
-else if ( $requestMethod === 'GET' && $requestUri === '/dbviewer/server.php/getall' ) {
+else if ( $requestMethod === 'GET' && $requestUri === '/dbviewer/server/server.php/getall' ) {
 
     if ( !empty($_GET['db']) && !empty($_GET['table']) && !empty($_GET['user']) ) {
         $host = htmlspecialchars($_GET['host']);
@@ -66,7 +66,7 @@ else if ( $requestMethod === 'GET' && $requestUri === '/dbviewer/server.php/geta
     exit;
 }
 
-else if ( $requestMethod === 'GET' && $requestUri === '/dbviewer/server.php/getjson' ) {
+else if ( $requestMethod === 'GET' && $requestUri === '/dbviewer/server/server.php/getjson' ) {
     header('Content-Type: application/json');
     echo "";
     exit;
