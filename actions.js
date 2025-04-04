@@ -1,7 +1,7 @@
-function clickRow(key, id, db, table, user, pass = "") {
+function clickRow(key, id, host, port, db, table, user, pass = "") {
     let rowData = "";
 
-    const bodyData = `key=${key}&id=${id}&db=${db}&table=${table}&user=${user}&pass=${pass}`;
+    const bodyData = `key=${key}&id=${id}&host=${host}&port=${port}&db=${db}&table=${table}&user=${user}&pass=${pass}`;
 
     fetch('server.php/getone', {
         method: 'POST',

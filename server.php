@@ -14,17 +14,19 @@ if ( $requestMethod === 'POST' && $requestUri === '/dbviewer/server.php/getone' 
     if ( !empty($params['id']) && is_numeric($params['id']) ) {
         $key = htmlspecialchars($params['key']);
         $id = htmlspecialchars($params['id']);
+        $host = htmlspecialchars($params['host']);
+        $port = htmlspecialchars($params['port']);
         $db = htmlspecialchars($params['db']);
         $table = htmlspecialchars($params['table']);
         $user = htmlspecialchars($params['user']);
         $pass = htmlspecialchars($params['pass']);
 
         try {
-            $backend->connect($db, $user, $pass);
+            $backend->connect($host, $port,$db, $user, $pass);
             $response = $backend->fetchOne($table, $key, $id);
         }
         catch (PDOException $e) {
-            $response = "Connection failed with error code " . $e->getCode() . " for " . $db . " " . $user . " " . $pass;
+            $response = "Connection failed with error code " . $e->getCode() . " for " . $host . " " . $port . " " . $db . " " . $user . " " . $pass;
         }
     }
     else {
@@ -39,18 +41,20 @@ if ( $requestMethod === 'POST' && $requestUri === '/dbviewer/server.php/getone' 
 else if ( $requestMethod === 'GET' && $requestUri === '/dbviewer/server.php/getall' ) {
 
     if ( !empty($_GET['db']) && !empty($_GET['table']) && !empty($_GET['user']) ) {
+        $host = htmlspecialchars($_GET['host']);
+        $port = htmlspecialchars($_GET['port']);
         $db = htmlspecialchars($_GET['db']);
         $table = htmlspecialchars($_GET['table']);
         $user = htmlspecialchars($_GET['user']);
         $pass = htmlspecialchars($_GET['pass']);
 
         try {
-            $backend->connect($db, $user, $pass);
+            $backend->connect($host, $port, $db, $user, $pass);
             $backend->fetchAll($table);
-            $response = $backend->renderReturn();
+            $response = $backend->render();
         }
         catch (PDOException $e) {
-            $response = "<p>Connection failed with error code " . $e->getCode() . " for " . $db . " " . $user . " " . $pass."</p>";
+            $response = "<p>Connection failed with error code " . $e->getCode() . " for " . $host . " " . $port . " " . $db . " " . $user . " " . $pass."</p>";
         }
     }
     else {

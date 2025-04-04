@@ -1,33 +1,11 @@
 <?php
     session_start();
 
-    function connect(&$backend) {
-
-        if (isset($_SESSION['dbName']) && isset($_SESSION['table']) && isset($_SESSION['userName'])) {
-
-            try {
-                $backend->connect($_SESSION['dbName'], $_SESSION['userName'], $_SESSION['passWord']);
-                $backend->fetchData($_SESSION['table']);
-
-                $_SESSION['success'] = "Fetched data from the database successfully";
-                unset($_SESSION['error']);
-            }
-            catch (PDOException $e) {
-                $_SESSION['error'] = "Error: " . $e->getMessage();
-                unset($_SESSION['success']);
-                unset($_SESSION['load']);
-
-                unset($_SESSION['dbName']);
-                unset($_SESSION['table']);
-                unset($_SESSION['userName']);
-                unset($_SESSION['passWord']);
-            }
-        }
-    }
-
     if(isset($_POST['submit'])) {
 
-        if (strlen($_POST['dbName']) > 0 && strlen($_POST['table']) > 0 && strlen($_POST['userName']) > 0) {
+        if (strlen($_POST['host']) > 0 && strlen($_POST['port']) > 0 && strlen($_POST['dbName']) > 0 && strlen($_POST['table']) > 0 && strlen($_POST['userName']) > 0) {
+            $_SESSION['host'] = $_POST['host'];
+            $_SESSION['port'] = $_POST['port'];
             $_SESSION['dbName'] = $_POST['dbName'];
             $_SESSION['table'] = $_POST['table'];
             $_SESSION['userName'] = $_POST['userName'];
@@ -35,7 +13,7 @@
             $_SESSION['load'] = 'load';
         } 
         else {
-            $_SESSION['error'] = "Missing database name, table or username";
+            $_SESSION['error'] = "Missing host, port, database name, table or username";
             unset($_SESSION['success']);
             unset($_SESSION['load']);
         }
@@ -48,13 +26,33 @@
 
         $url = 'http://localhost/dbviewer/server.php/getall';
         $params = [
+            'host' => $_SESSION['host'],
+            'port' => $_SESSION['port'],
             'db' => $_SESSION['dbName'],
             'table' => $_SESSION['table'],
             'user' => $_SESSION['userName'],
             'pass' => $_SESSION['passWord']
         ];
         $url .= '?' . http_build_query($params);
-        $response = file_get_contents($url);
+
+        try {
+            $response = file_get_contents($url);
+
+            $_SESSION['success'] = "Fetched data from the database successfully";
+            unset($_SESSION['error']);
+        } 
+        catch (PDOException $e) {
+            $_SESSION['error'] = "Error: " . $e->getMessage();
+            unset($_SESSION['success']);
+            unset($_SESSION['load']);
+
+            unset($_SESSION['host']);
+            unset($_SESSION['port']);
+            unset($_SESSION['dbName']);
+            unset($_SESSION['table']);
+            unset($_SESSION['userName']);
+            unset($_SESSION['passWord']);
+        }
 
     }
 ?>
@@ -90,10 +88,13 @@
         }
         else { ?>
 
-        <p class="text-info">Please enter the database and table name, username and optionally password.</p>
-        <p class="text-warning">If the database host is not <b>localhost</b> or the port is not <b>3306</b>, please change it in the backend.</p><br>
+        <p class="text-info">Please enter the database and table name, username and optionally password.</p><br>
         <p>
             <form action="index.php" method="POST">
+                <label for="host">Host:</label>
+                <input type="text" name="host" id="host" value="localhost"><br>
+                <label for="port">Port:</label>
+                <input type="text" name="port" id="port" value="3306"><br><br>
                 <label for="name">DB Name:</label>
                 <input type="text" name="dbName" id="dbName" placeholder="Enter the database name"><br>
                 <label for="userName">User Name:</label>
