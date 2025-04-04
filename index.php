@@ -21,6 +21,27 @@
         header("Location: index.php");
         return;
     }
+    else if (isset($_POST['refresh'])) {
+
+        if (strlen($_POST['table']) > 0) {
+            $_SESSION['table'] = $_POST['table'];
+            $_SESSION['load'] = 'load';
+        }
+        else {
+            $_SESSION['error'] = "Missing table name";
+            unset($_SESSION['host']);
+            unset($_SESSION['port']);
+            unset($_SESSION['dbName']);
+            unset($_SESSION['table']);
+            unset($_SESSION['userName']);
+            unset($_SESSION['passWord']);
+            unset($_SESSION['success']);
+            unset($_SESSION['load']);
+        }
+
+        header("Location: index.php");
+        return;
+    }
 
     if (isset($_SESSION['load'])) {
 
@@ -84,7 +105,18 @@
 
         if (isset($_SESSION['load'])) {
             echo $response;
-            echo "<p><a href='reset.php' type='button' class='btn btn-primary'>Reset and Back</a></p>";
+        ?>
+        <p>
+            <form action="index.php" method="POST">
+                <label for="table">Table:</label>
+                <input type="text" name="table" id="table" value="<?= $_SESSION['table'] ?>">
+                <input type="submit" class="btn btn-primary" name="refresh" value="Refresh">
+            </form>
+        </p>
+        <p>
+            <a href='reset.php' type='button' class='btn btn-primary'>Reset and Back</a>
+        </p>
+        <?php 
         }
         else { ?>
 
@@ -101,7 +133,7 @@
                 <input type="text" name="userName" id="userName" placeholder="Enter your username"><br>
                 <label for="passWord">Password:</label>
                 <input type="text" name="passWord" id="passWord" placeholder="Enter your password"><br><br>
-                <label for="passWord">Table:</label>
+                <label for="table">Table:</label>
                 <input type="text" name="table" id="table" placeholder="Enter the table to display"><br><br>
                 <input type="submit" class="btn btn-primary" name="submit" value="Submit">
             </form>
