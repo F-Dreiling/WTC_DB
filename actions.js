@@ -3,7 +3,7 @@ function clickRow(key, id, host, port, db, table, user, pass = "") {
 
     const bodyData = `key=${key}&id=${id}&host=${host}&port=${port}&db=${db}&table=${table}&user=${user}&pass=${pass}`;
 
-    fetch('server/server.php/getone', {
+    fetch('http://localhost/dbviewer/server/server.php/getone', {
         method: 'POST',
         headers: {
             'Content-Type': 'text/plain'
