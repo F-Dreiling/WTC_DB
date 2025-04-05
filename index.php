@@ -56,13 +56,17 @@
         ];
         $url .= '?' . http_build_query($params);
 
+        set_error_handler(function ($severity, $message, $file, $line) {
+            throw new ErrorException($message, 0, $severity, $file, $line);
+        });
+
         try {
             $response = file_get_contents($url);
 
             $_SESSION['success'] = "Fetched data from the database successfully";
             unset($_SESSION['error']);
         } 
-        catch (PDOException $e) {
+        catch (Exception $e) {
             $_SESSION['error'] = "Error: " . $e->getMessage();
             unset($_SESSION['success']);
             unset($_SESSION['load']);
@@ -74,7 +78,9 @@
             unset($_SESSION['userName']);
             unset($_SESSION['passWord']);
         }
-
+        finally {
+            restore_error_handler();
+        }
     }
 ?>
 
@@ -83,6 +89,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        let sessionData = <?php echo json_encode($_SESSION); ?>;
+    </script>
     <script src="actions.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <title>DB Viewer</title>

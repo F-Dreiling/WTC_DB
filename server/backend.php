@@ -4,22 +4,9 @@ require_once 'data.php';
 
 class Backend {
     private $connection;
-    private $host;
-    private $port;
-    private $dbName;
-    private $user;
-    private $pass;
-    private $table;
     private $data;
 
     function connect($host, $port, $dbName, $user, $pass) {
-        // Store DB parameters
-        $this->host = $host;
-        $this->port = $port;
-        $this->dbName = $dbName;
-        $this->user = $user;
-        $this->pass = $pass;
-
         // Create connection
         $this->connection = new PDO("mysql:host=$host;port=$port;dbname=$dbName", $user, $pass);
         $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -34,12 +21,11 @@ class Backend {
     }
 
     function fetchOne($table, $key, $id) {
-        $this->table = $table;
         $this->data->tableName = $table;
 
         // Check if table exists
         $stmt = $this->connection->prepare("SHOW TABLES LIKE :table");
-        $stmt->bindParam(':table', $this->table);
+        $stmt->bindParam(':table', $table);
         $stmt->execute();
         if ($stmt->rowCount() == 0) {
             throw new PDOException("Table $table does not exist in the database.");
@@ -69,12 +55,11 @@ class Backend {
     }
 
     function fetchAll($table) {
-        $this->table = $table;
         $this->data->tableName = $table;
 
         // Check if table exists
         $stmt = $this->connection->prepare("SHOW TABLES LIKE :table");
-        $stmt->bindParam(':table', $this->table);
+        $stmt->bindParam(':table', $table);
         $stmt->execute();
         if ($stmt->rowCount() == 0) {
             throw new PDOException("Table $table does not exist in the database.");
@@ -119,7 +104,7 @@ class Backend {
         
         $key = $this->data->columnNames[0];
         foreach ($this->data->tableData as $row) {
-            $result .= "<tr onclick=\"clickRow('".$key."', ".$row[$key].", '".$this->host."', '".$this->port."', '".$this->dbName."', '".$this->table."', '".$this->user."', '".$this->pass."')\">";
+            $result .= "<tr onclick=\"clickRow('".$key."', ".$row[$key].")\">";
             foreach ($row as $cell) {
                 $result .= "<td>".htmlentities($cell)."</td>";
             }
@@ -132,7 +117,7 @@ class Backend {
     }
 
     function oneToString(){
-        return implode(" ", $this->data->tableData[0]);
+        return htmlentities(implode(" ", $this->data->tableData[0]));
     }
 
 }

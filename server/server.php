@@ -27,7 +27,7 @@ if ( $requestMethod === 'POST' && $requestUri === '/dbviewer/server/server.php/g
             $response = $backend->oneToString();
         }
         catch (PDOException $e) {
-            $response = "Connection failed with error code " . $e->getCode() . " for " . $host . " " . $port . " " . $db . " " . $user . " " . $pass;
+            throw new Exception ("Connection failed: " . $e->getMessage() . ", for " . $host . " " . $port . " " . $db . " " . $user . " " . $table . " " . $key . " " . $id);     
         }
     }
     else {
@@ -55,7 +55,7 @@ else if ( $requestMethod === 'GET' && $requestUri === '/dbviewer/server/server.p
             $response = $backend->render();
         }
         catch (PDOException $e) {
-            $response = "<p>Connection failed with error code " . $e->getCode() . " for " . $host . " " . $port . " " . $db . " " . $user . " " . $pass."</p>";
+            throw new Exception("Connection failed: " . $e->getMessage() . ", for " . $host . " " . $port . " " . $db . " " . $user . " " . $table);
         }
     }
     else {

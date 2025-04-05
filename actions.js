@@ -1,6 +1,13 @@
-function clickRow(key, id, host, port, db, table, user, pass = "") {
-    let rowData = "";
+let host = sessionData.host;
+let port = sessionData.port;
+let db = sessionData.dbName;
+let table = sessionData.table;
+let user = sessionData.userName;
+let pass = sessionData.passWord;
 
+function clickRow(key, id) {
+    let rowData = "";
+    
     const bodyData = `key=${key}&id=${id}&host=${host}&port=${port}&db=${db}&table=${table}&user=${user}&pass=${pass}`;
 
     fetch('http://localhost/dbviewer/server/server.php/getone', {
