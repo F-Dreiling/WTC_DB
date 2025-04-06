@@ -93,41 +93,41 @@
         let sessionData = <?php echo json_encode($_SESSION); ?>;
     </script>
     <script src="actions.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
     <title>DB Viewer</title>
 </head>
 <body>
     <div id="content" class="container">
         <h1>Welcome to DB Viewer</h1>
 
-        <?php
+        <?php if (isset($_SESSION['error'])) : ?>
+            <p class='text-danger'><?= htmlentities($_SESSION['error']); ?></p><br>
+            <?php unset($_SESSION['error']); ?>
+        <?php endif; ?>
 
-        if (isset($_SESSION['error'])) {
-            echo "<p class='text-danger'>".htmlentities($_SESSION['error'])."</p><br>";
-            unset($_SESSION['error']);
-        }
+        <?php if (isset($_SESSION['success'])): ?>
+            <p class='text-success'><?= htmlentities($_SESSION['success']); ?></p>
+            <?php unset($_SESSION['success']); ?>
+        <?php endif; ?>
 
-        if (isset($_SESSION['success'])) {
-            echo "<p class='text-success'>".htmlentities($_SESSION['success'])."</p>";
-            unset($_SESSION['success']);
-        }
+        <?php if (isset($_SESSION['load'])): ?>
 
-        if (isset($_SESSION['load'])) {
-            echo $response;
-        ?>
-        <p>
-            <form action="index.php" method="POST">
+        <div>
+            <?= $response; ?>
+        </div>
+
+        <div class="d-flex flex-row align-items-center gap-2">
+            <form action="index.php" method="POST" class="me-2">
                 <label for="table">Table:</label>
-                <input type="text" name="table" id="table" value="<?= $_SESSION['table'] ?>">
-                <input type="submit" class="btn btn-primary" name="refresh" value="Refresh">
+                <input type="text" name="table" id="table" value="<?= htmlentities($_SESSION['table']); ?>">
+                <input type="submit" class="btn btn-secondary" name="refresh" value="Refresh">
             </form>
-        </p>
-        <p>
-            <a href='reset.php' type='button' class='btn btn-primary'>Reset and Back</a>
-        </p>
-        <?php 
-        }
-        else { ?>
+
+            <a href='reset.php' type='button' class='btn btn-secondary me-2'>Reset and Back</a>
+            <input onclick='printJson()' type='button' class='btn btn-secondary' value='Print JSON to Log'>
+        </div>
+
+        <?php else: ?>
 
         <p class="text-info">Please enter the database and table name, username and optionally password.</p><br>
         <p>
@@ -148,7 +148,7 @@
             </form>
         </p>
 
-        <?php } ?>
+        <?php endif; ?>
     </div>
 </body>
 </html>

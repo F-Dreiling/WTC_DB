@@ -4,7 +4,7 @@ require_once 'data.php';
 
 class Backend {
     private $connection;
-    private $data;
+    public $data;
 
     function connect($host, $port, $dbName, $user, $pass) {
         // Create connection

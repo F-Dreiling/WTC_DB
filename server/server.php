@@ -42,8 +42,8 @@ if ( $requestMethod === 'POST' && $requestUri === '/dbviewer/server/server.php/g
 else if ( $requestMethod === 'GET' && $requestUri === '/dbviewer/server/server.php/getall' ) {
 
     if ( !empty($_GET['db']) && !empty($_GET['table']) && !empty($_GET['user']) ) {
-        $host = htmlspecialchars($_GET['host']);
-        $port = htmlspecialchars($_GET['port']);
+        $host = htmlspecialchars($_GET['host']) ?? "localhost";
+        $port = htmlspecialchars($_GET['port']) ?? "3306";
         $db = htmlspecialchars($_GET['db']);
         $table = htmlspecialchars($_GET['table']);
         $user = htmlspecialchars($_GET['user']);
@@ -68,8 +68,30 @@ else if ( $requestMethod === 'GET' && $requestUri === '/dbviewer/server/server.p
 }
 
 else if ( $requestMethod === 'GET' && $requestUri === '/dbviewer/server/server.php/getjson' ) {
+
+    if ( !empty($_GET['db']) && !empty($_GET['table']) && !empty($_GET['user']) ) {
+        $host = htmlspecialchars($_GET['host']) ?? "localhost";
+        $port = htmlspecialchars($_GET['port']) ?? "3306";
+        $db = htmlspecialchars($_GET['db']);
+        $table = htmlspecialchars($_GET['table']);
+        $user = htmlspecialchars($_GET['user']);
+        $pass = htmlspecialchars($_GET['pass']);
+
+        try {
+            $backend->connect($host, $port, $db, $user, $pass);
+            $backend->fetchAll($table);
+            $response = json_encode($backend->data->jsonSerialize());
+        }
+        catch (PDOException $e) {
+            $response = json_encode(["error" => "Error: " . $e->getMessage() . ", for " . $host . " " . $port . " " . $db . " " . $user . " " . $table]);
+        }
+    }
+    else {
+        $response = json_encode(["error" => "Error: Invalid Data received"]);
+    }
+
     header('Content-Type: application/json');
-    echo "";
+    echo $response;
     exit;
 }
 

@@ -33,3 +33,38 @@ async function clickRow(key, id) {
         console.error('Error: ', error);
     }
 }
+
+async function printJson() {
+    const queryParams = new URLSearchParams({
+        host: host,
+        port: port,
+        db: db,
+        table: table,
+        user: user,
+        pass: pass
+    });
+
+    try {
+        const response = await fetch(`http://localhost/dbviewer/server/server.php/getjson?${queryParams}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const jsonData = await response.json();
+
+        if (!jsonData || Object.keys(jsonData).length === 0) {
+            console.error('Error: No data received from server');
+        } 
+        else if (jsonData.error) {
+            console.error(jsonData.error);
+        } 
+        else {
+            console.log(jsonData);
+        }
+    } 
+    catch (error) {
+        console.error('Error: ', error);
+    }
+}
