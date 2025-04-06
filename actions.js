@@ -61,7 +61,9 @@ async function printJson() {
             console.error(jsonData.error);
         } 
         else {
-            console.log(jsonData);
+            const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            window.open(url);
         }
     } 
     catch (error) {
