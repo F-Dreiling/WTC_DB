@@ -97,7 +97,7 @@
     <title>DB Viewer</title>
 </head>
 <body>
-    <div id="content" class="container">
+    <div id="content" class="container mt-4 mb-2">
         <h1>Welcome to DB Viewer</h1>
 
         <?php if (isset($_SESSION['error'])) : ?>
