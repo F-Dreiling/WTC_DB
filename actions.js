@@ -5,26 +5,31 @@ let table = sessionData.table;
 let user = sessionData.userName;
 let pass = sessionData.passWord;
 
-function clickRow(key, id) {
-    let rowData = "";
-    
+async function clickRow(key, id) {    
     const bodyData = `key=${key}&id=${id}&host=${host}&port=${port}&db=${db}&table=${table}&user=${user}&pass=${pass}`;
 
-    fetch('http://localhost/dbviewer/server/server.php/getone', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'text/plain'
-        },
-        body: bodyData
-    })
-    .then(response => response.text())
-    .then(data => {
-        rowData = data;
-        console.log(rowData);
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
+    try {
+        const response = await fetch('http://localhost/dbviewer/server/server.php/getone', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain'
+            },
+            body: bodyData
+        });
 
-    return rowData.toString();
+        const rowData = await response.text();
+
+        if (rowData === "" || rowData === null) {
+            console.error('Error: No data received from server');
+        } 
+        else if (rowData.substring(0, 5) === "Error") {
+            console.error(rowData);
+        } 
+        else {
+            console.log(rowData);
+        }
+    } 
+    catch (error) {
+        console.error('Error: ', error);
+    }
 }

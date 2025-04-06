@@ -27,11 +27,11 @@ if ( $requestMethod === 'POST' && $requestUri === '/dbviewer/server/server.php/g
             $response = $backend->oneToString();
         }
         catch (PDOException $e) {
-            throw new Exception ("Connection failed: " . $e->getMessage() . ", for " . $host . " " . $port . " " . $db . " " . $user . " " . $table . " " . $key . " " . $id);     
+            $response = "Error: " . $e->getMessage() . ", for " . $host . " " . $port . " " . $db . " " . $user . " " . $table . " " . $key . " " . $id;     
         }
     }
     else {
-        $response = "Invalid ID received";
+        $response = "Error: Invalid ID received";
     }
 
     header('Content-Type: text/plain');
@@ -55,11 +55,11 @@ else if ( $requestMethod === 'GET' && $requestUri === '/dbviewer/server/server.p
             $response = $backend->render();
         }
         catch (PDOException $e) {
-            throw new Exception("Connection failed: " . $e->getMessage() . ", for " . $host . " " . $port . " " . $db . " " . $user . " " . $table);
+            $response = "Error: " . $e->getMessage() . ", for " . $host . " " . $port . " " . $db . " " . $user . " " . $table;
         }
     }
     else {
-        $response = "<p>Invalid Data received</p>";
+        $response = "Error: Invalid Data received";
     }
 
     header('Content-Type: text/html');

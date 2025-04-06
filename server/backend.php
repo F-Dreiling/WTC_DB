@@ -28,7 +28,7 @@ class Backend {
         $stmt->bindParam(':table', $table);
         $stmt->execute();
         if ($stmt->rowCount() == 0) {
-            throw new PDOException("Table $table does not exist in the database.");
+            throw new PDOException("Table $table does not exist in the database");
         }
 
         // Fetch data from the table
@@ -62,7 +62,7 @@ class Backend {
         $stmt->bindParam(':table', $table);
         $stmt->execute();
         if ($stmt->rowCount() == 0) {
-            throw new PDOException("Table $table does not exist in the database.");
+            throw new PDOException("Table $table does not exist in the database");
         }
 
         // Fetch data from the table

@@ -56,18 +56,21 @@
         ];
         $url .= '?' . http_build_query($params);
 
-        set_error_handler(function ($severity, $message, $file, $line) {
-            throw new ErrorException($message, 0, $severity, $file, $line);
-        });
-
         try {
             $response = file_get_contents($url);
+
+            if ($response === false || $response === "") {
+                throw new Exception("Error fetching data from the server");
+            }
+            else if (substr($response, 0, 5) === "Error") {
+                throw new Exception($response);
+            }
 
             $_SESSION['success'] = "Fetched data from the database successfully";
             unset($_SESSION['error']);
         } 
         catch (Exception $e) {
-            $_SESSION['error'] = "Error: " . $e->getMessage();
+            $_SESSION['error'] = $e->getMessage();
             unset($_SESSION['success']);
             unset($_SESSION['load']);
 
@@ -77,9 +80,6 @@
             unset($_SESSION['table']);
             unset($_SESSION['userName']);
             unset($_SESSION['passWord']);
-        }
-        finally {
-            restore_error_handler();
         }
     }
 ?>
