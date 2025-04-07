@@ -98,25 +98,25 @@
 </head>
 <body>
     <div id="content" class="container d-flex flex-column align-items-center text-center mt-4 mb-2">
-        <h1 class="w-75">Welcome to DB Viewer</h1>
+        <h1>Welcome to DB Viewer</h1>
 
         <?php if (isset($_SESSION['error'])) : ?>
-            <p class='text-danger w-75'><?= htmlentities($_SESSION['error']); ?></p>
+            <p class='text-danger'><?= htmlentities($_SESSION['error']); ?></p>
             <?php unset($_SESSION['error']); ?>
         <?php endif; ?>
 
         <?php if (isset($_SESSION['success'])): ?>
-            <p class='text-success w-75'><?= htmlentities($_SESSION['success']); ?></p>
+            <p class='text-success'><?= htmlentities($_SESSION['success']); ?></p>
             <?php unset($_SESSION['success']); ?>
         <?php endif; ?>
 
         <?php if (isset($_SESSION['load'])): ?>
 
-        <div class="w-75">
+        <div class="w-100">
             <?= $response; ?>
         </div>
 
-        <div class="d-flex justify-content-between align-items-center gap-2 w-75">
+        <div class="d-flex justify-content-between align-items-center gap-2 w-100">
             <a href='reset.php' type='button' class='btn btn-secondary'>&lt;&lt; Reset</a>
 
             <form action="index.php" method="POST">
@@ -130,7 +130,7 @@
 
         <?php else: ?>
 
-        <p class="text-warning w-75">Please enter the database and table name, username and optionally password.</p>
+        <p class="text-warning">Please enter the database and table name, username and optionally password.</p>
 
         <div class="w-75">
             <form action="index.php" method="POST" class="d-flex flex-column gap-3">
