@@ -11,11 +11,11 @@ if ( $requestMethod === 'POST' && $requestUri === '/dbviewer/server/server.php/g
     $input = file_get_contents('php://input');
     parse_str($input, $params);
 
-    if ( !empty($params['id']) && is_numeric($params['id']) ) {
-        $key = htmlspecialchars($params['key']);
+    if ( !empty($params['id']) && is_numeric($params['id']) && !empty($params['db']) && !empty($params['table']) && !empty($params['user'])) {
         $id = htmlspecialchars($params['id']);
-        $host = htmlspecialchars($params['host']);
-        $port = htmlspecialchars($params['port']);
+        $key = htmlspecialchars($params['key']) ?? "id";
+        $host = htmlspecialchars($params['host']) ?? "localhost";
+        $port = htmlspecialchars($params['port']) ?? "3306";
         $db = htmlspecialchars($params['db']);
         $table = htmlspecialchars($params['table']);
         $user = htmlspecialchars($params['user']);
@@ -24,17 +24,17 @@ if ( $requestMethod === 'POST' && $requestUri === '/dbviewer/server/server.php/g
         try {
             $backend->connect($host, $port,$db, $user, $pass);
             $backend->fetchOne($table, $key, $id);
-            $response = $backend->oneToString();
+            $response = $backend->renderJson();
         }
         catch (PDOException $e) {
-            $response = "Error: " . $e->getMessage() . ", for " . $host . " " . $port . " " . $db . " " . $user . " " . $table . " " . $key . " " . $id;     
+            $response = json_encode(["error" => "Error: " . $e->getMessage() . ", for " . $host . " " . $port . " " . $db . " " . $user . " " . $table . " " . $key . " " . $id]);     
         }
     }
     else {
-        $response = "Error: Invalid ID received";
+        $response = json_encode(["error" => "Error: Invalid Data received"]);
     }
 
-    header('Content-Type: text/plain');
+    header('Content-Type: application/json');
     echo $response;
     exit;
 }
@@ -52,22 +52,22 @@ else if ( $requestMethod === 'GET' && $requestUri === '/dbviewer/server/server.p
         try {
             $backend->connect($host, $port, $db, $user, $pass);
             $backend->fetchAll($table);
-            $response = $backend->render();
+            $response = $backend->renderJson();
         }
         catch (PDOException $e) {
-            $response = "Error: " . $e->getMessage() . ", for " . $host . " " . $port . " " . $db . " " . $user . " " . $table;
+            $response = json_encode(["error" => "Error: " . $e->getMessage() . ", for " . $host . " " . $port . " " . $db . " " . $user . " " . $table]);
         }
     }
     else {
-        $response = "Error: Invalid Data received";
+        $response = json_encode(["error" => "Error: Invalid Data received"]);
     }
 
-    header('Content-Type: text/html');
+    header('Content-Type: application/json');
     echo $response;
     exit;
 }
 
-else if ( $requestMethod === 'GET' && $requestUri === '/dbviewer/server/server.php/getjson' ) {
+else if ( $requestMethod === 'GET' && $requestUri === '/dbviewer/server/server.php/gethtml' ) {
 
     if ( !empty($_GET['db']) && !empty($_GET['table']) && !empty($_GET['user']) ) {
         $host = htmlspecialchars($_GET['host']) ?? "localhost";
@@ -80,17 +80,17 @@ else if ( $requestMethod === 'GET' && $requestUri === '/dbviewer/server/server.p
         try {
             $backend->connect($host, $port, $db, $user, $pass);
             $backend->fetchAll($table);
-            $response = json_encode($backend->data->jsonSerialize());
+            $response = $backend->renderHtml();
         }
         catch (PDOException $e) {
-            $response = json_encode(["error" => "Error: " . $e->getMessage() . ", for " . $host . " " . $port . " " . $db . " " . $user . " " . $table]);
+            $response = "Error: " . $e->getMessage() . ", for " . $host . " " . $port . " " . $db . " " . $user . " " . $table;
         }
     }
     else {
-        $response = json_encode(["error" => "Error: Invalid Data received"]);
+        $response = "Error: Invalid Data received";
     }
 
-    header('Content-Type: application/json');
+    header('Content-Type: text/html');
     echo $response;
     exit;
 }

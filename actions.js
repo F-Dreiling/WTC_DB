@@ -17,16 +17,16 @@ async function clickRow(key, id) {
             body: bodyData
         });
 
-        const rowData = await response.text();
+        const rowData = await response.json();
 
-        if (rowData === "" || rowData === null) {
+        if (!rowData || Object.keys(rowData).length === 0) {
             console.error('Error: No data received from server');
         } 
-        else if (rowData.substring(0, 5) === "Error") {
-            console.error(rowData);
+        else if (rowData.error) {
+            console.error(rowData.error);
         } 
         else {
-            console.log(rowData);
+            console.log(JSON.stringify(rowData, null, 2));
         }
     } 
     catch (error) {
@@ -45,7 +45,7 @@ async function printJson() {
     });
 
     try {
-        const response = await fetch(`http://localhost/dbviewer/server/server.php/getjson?${queryParams}`, {
+        const response = await fetch(`http://localhost/dbviewer/server/server.php/getall?${queryParams}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'

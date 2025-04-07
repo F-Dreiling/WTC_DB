@@ -9,8 +9,7 @@ class Data implements JsonSerializable {
 
     public function jsonSerialize(): mixed {
         return [
-            'columnNames' => $this->columnNames,
-            'tableData' => $this->tableData
+            $this->tableName => $this->tableData
         ];
     }
 }

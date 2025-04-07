@@ -4,7 +4,7 @@ require_once 'data.php';
 
 class Backend {
     private $connection;
-    public $data;
+    private $data;
 
     function connect($host, $port, $dbName, $user, $pass) {
         // Create connection
@@ -88,7 +88,7 @@ class Backend {
         $this->data->rowCount = count($tableData);
     }
 
-    function render() {
+    function renderHtml() {
         $result = "<h3>Table: ".$this->data->tableName."</h3>";
         $result .= "<p>Row Count: ".$this->data->rowCount."</p>";
         $result .= "<p>Column Count: ".$this->data->columnCount."</p>";
@@ -116,10 +116,9 @@ class Backend {
         return $result;
     }
 
-    function oneToString(){
-        return htmlentities(implode(" ", $this->data->tableData[0]));
+    function renderJson() {
+        return json_encode($this->data->jsonSerialize());
     }
-
 }
 
 ?>
