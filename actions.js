@@ -9,7 +9,9 @@ async function clickRow(key, id) {
     const bodyData = `key=${key}&id=${id}&host=${host}&port=${port}&db=${db}&table=${table}&user=${user}&pass=${pass}`;
 
     try {
-        const response = await fetch('http://localhost/dbviewer/server/server.php/getone', {
+        // URL to Backend
+        const url = `${window.location.origin}${window.location.pathname.replace(/\/[^/]*$/, '')}/server/server.php/getone`;
+        const response = await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'text/plain'
@@ -45,7 +47,9 @@ async function printJson() {
     });
 
     try {
-        const response = await fetch(`http://localhost/dbviewer/server/server.php/getall?${queryParams}`, {
+        // URL to Backend
+        const url = `${window.location.origin}${window.location.pathname.replace(/\/[^/]*$/, '')}/server/server.php/getall?${queryParams}`;
+        const response = await fetch(url, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'

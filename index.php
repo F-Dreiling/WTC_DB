@@ -44,8 +44,9 @@
     }
 
     if (isset($_SESSION['load'])) {
-
-        $url = 'http://localhost/dbviewer/server/server.php/gethtml';
+        // URL to Backend
+        $url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") 
+            . "://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) .'/server/server.php/gethtml';
         $params = [
             'host' => $_SESSION['host'],
             'port' => $_SESSION['port'],
